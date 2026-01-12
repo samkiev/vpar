@@ -2,6 +2,7 @@ package com.osem.vpar;
 
 import com.osem.vpar.repository.VacancyRepository;
 import com.osem.vpar.service.impl.PracujPlParcer;
+import com.osem.vpar.service.impl.VacancyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -11,7 +12,8 @@ import org.springframework.stereotype.Component;
 public class ConsoleRunner implements CommandLineRunner {
 
     private final PracujPlParcer vacancyParser;
-    private final VacancyRepository vacancyRepository;
+//    private final VacancyRepository vacancyRepository;
+    private final VacancyService vacancyService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -25,9 +27,11 @@ public class ConsoleRunner implements CommandLineRunner {
                     + v.getSalary() + " Date published: " + v.getDateAdded() + " Vacancy Url: " + v.getUrl());
         });
 
-        System.out.println("---------------------------------------");
 
-        vacancyRepository.saveAll(vacancies);
-        System.out.println("Saved " + vacancies.size() + " vacancies to DB!");
+        int savedCount = vacancyService.saveNewVacancies(vacancies);
+
+        System.out.println("---------------------------------------");
+        System.out.println("Job done! Found: " + vacancies.size() + ". New Saved: " + savedCount);
+        System.out.println("---------------------------------------");
     }
 }

@@ -67,17 +67,33 @@ public class PracujPlParcer extends AbstractSiteParser {
     @Override
     protected String extractUrl(Element card) {
         Elements links = card.select(vacancyLink);
-        if (links.isEmpty())
-            return "Link is not found";
-        if (links.size() == 1) {
-            return links.getFirst().absUrl("href");
+        String rawUrl = "Link is not found";
+
+        if (!links.isEmpty()) {
+            if (links.size() == 1) {
+                rawUrl = links.first().absUrl("href");
+            } else {
+                Element krakowLink = card.selectFirst(vacancyLink + ":contains(Kraków)");
+                if (krakowLink != null) {
+                    rawUrl = krakowLink.absUrl("href");
+                } else {
+                    rawUrl = links.first().absUrl("href");
+                }
+            }
         }
 
-        Element krakowLink = card.selectFirst(vacancyLink + ":contains(Kraków)");
-        if (krakowLink != null) {
-            return krakowLink.absUrl("href");
+        return sanitizeUrl(rawUrl);
+    }
+
+    String sanitizeUrl(String url) {
+        if (url == null) {
+            return "Link is not found: ";
         }
-        return links.first().absUrl("href");
+        int index = url.indexOf("?");
+        if (index != -1) {
+            return url.substring(0, index);
+        }
+        return url;
     }
 
 }
