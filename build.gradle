@@ -1,0 +1,49 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.9'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.osem'
+version = '0.0.1-SNAPSHOT'
+description = 'Vacancy Parser fot AQA in Poland Market'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+
+    configureEach {
+		exclude group: 'commons-logging', module: 'commons-logging'
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation("org.jsoup:jsoup:1.22.1")
+	implementation 'com.microsoft.playwright:playwright:1.57.0'
+	implementation 'com.opencsv:opencsv:5.12.0'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.register('playwright', JavaExec) {
+	classpath sourceSets.test.runtimeClasspath
+	mainClass = 'com.microsoft.playwright.CLI'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
