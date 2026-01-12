@@ -1,21 +1,17 @@
 package com.osem.vpar;
 
-import com.osem.vpar.service.VacancyParser;
+import com.osem.vpar.repository.VacancyRepository;
 import com.osem.vpar.service.impl.PracujPlParcer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-@Component // 1. Говорим Спрингу: "Это тоже твой бин, управляй им"
-@RequiredArgsConstructor // 2. LOMBOK: Генерирует конструктор для final полей
+@Component
+@RequiredArgsConstructor
 public class ConsoleRunner implements CommandLineRunner {
 
-    // 3. Мы объявляем интерфейс, а не реализацию! (DIP)
     private final PracujPlParcer vacancyParser;
-
-    // Спринг видит конструктор (от Lombok) и понимает:
-    // "Ага, этому классу нужен VacancyParser. У меня в коробке как раз лежит MockVacancyParser.
-    // Дай-ка я его сюда подставлю". Это и есть Dependency Injection.
+    private final VacancyRepository vacancyRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -30,5 +26,8 @@ public class ConsoleRunner implements CommandLineRunner {
         });
 
         System.out.println("---------------------------------------");
+
+        vacancyRepository.saveAll(vacancies);
+        System.out.println("Saved " + vacancies.size() + " vacancies to DB!");
     }
 }

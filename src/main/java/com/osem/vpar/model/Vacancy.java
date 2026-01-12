@@ -1,18 +1,39 @@
 package com.osem.vpar.model;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.*;
 
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "vacancies")
 @Data
 @Builder
-@Getter
-@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Vacancy {
-    String title;
-    String companyName;
-    String salary;
-    String url;
-    String dateAdded;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column(name = "company_name")
+    private String companyName;
+
+    private String salary;
+
+    @Column(nullable = false, unique = true)
+    private String url;
+
+    private String dateAdded;
+
+    private LocalDateTime parsedAt;
+
+    @PrePersist
+    public void onPrePersist() {
+        this.parsedAt = LocalDateTime.now();
+    }
 }
