@@ -1,7 +1,6 @@
 package com.osem.vpar;
 
-import com.osem.vpar.repository.VacancyRepository;
-import com.osem.vpar.service.impl.PracujPlParcer;
+import com.osem.vpar.service.impl.PracujPlParser;
 import com.osem.vpar.service.impl.VacancyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ConsoleRunner implements CommandLineRunner {
 
-    private final PracujPlParcer vacancyParser;
+    private final PracujPlParser vacancyParser;
 //    private final VacancyRepository vacancyRepository;
     private final VacancyService vacancyService;
 

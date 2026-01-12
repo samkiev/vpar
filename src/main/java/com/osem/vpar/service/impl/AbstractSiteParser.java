@@ -17,7 +17,7 @@ public abstract class AbstractSiteParser implements VacancyParser {
 
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
-                     .setHeadless(false) // При деплое поменяем на true
+                     .setHeadless(false)
                      .setArgs(List.of("--start-maximized")))) {
             BrowserContext context = browser.newContext(new Browser.NewContextOptions()
                     .setViewportSize(null));

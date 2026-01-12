@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class PracujPlParcer extends AbstractSiteParser {
+public class PracujPlParser extends AbstractSiteParser {
     private static final String PRACUJ_BASEURL = "https://it.pracuj.pl/praca?et=18%2C4&tc=0%2C3&its=testing&itth=38";
     //locators
     private static final String title = "h2[data-test='offer-title']";
