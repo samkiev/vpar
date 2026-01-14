@@ -1,17 +1,21 @@
 package com.osem.vpar;
 
+import com.osem.vpar.service.VacancyParser;
 import com.osem.vpar.service.impl.PracujPlParser;
 import com.osem.vpar.service.impl.VacancyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 @Component
 @RequiredArgsConstructor
 public class ConsoleRunner implements CommandLineRunner {
 
     private final PracujPlParser vacancyParser;
-//    private final VacancyRepository vacancyRepository;
     private final VacancyService vacancyService;
 
     @Override
