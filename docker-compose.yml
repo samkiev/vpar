@@ -6,13 +6,13 @@ services:
     container_name: job_agregator_db
     restart: always
     environment:
-      POSTGRES_USER: admin     # Логин
-      POSTGRES_PASSWORD: root  # Пароль (для локальной разработки простые ок)
-      POSTGRES_DB: job_agregator_db # Имя базы, создастся автоматически
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: job_agregator_db
     ports:
-      - "5444:5432"            # Прокидываем порт наружу, чтобы IDEA могла подключиться
+      - "5444:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data # Чтобы данные не терялись при перезапуске контейнера
+      - db_data:/var/lib/postgresql/data
 
 volumes:
   db_data:
