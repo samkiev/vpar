@@ -3,13 +3,14 @@ package com.osem.vpar.service.impl;
 import com.microsoft.playwright.*;
 import com.osem.vpar.model.Vacancy;
 import com.osem.vpar.service.VacancyParser;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Slf4j
 public abstract class AbstractSiteParser implements VacancyParser {
     @Override
     public List<Vacancy> parse(String searchUrl) {
@@ -23,7 +24,7 @@ public abstract class AbstractSiteParser implements VacancyParser {
                     .setViewportSize(null));
             Page page = context.newPage();
 
-            System.out.println("Navigating to: " + searchUrl);
+            log.info("Navigating to: {}", searchUrl);
             page.navigate(searchUrl);
             //Check and accept cookie if needed
             onPageLoad(page);
@@ -32,7 +33,7 @@ public abstract class AbstractSiteParser implements VacancyParser {
             Document doc = Jsoup.parse(htmlContent, searchUrl);
             List<Element> jsoupCards = getVacancyElements(doc);
 
-            System.out.println("Items after expansion: " + jsoupCards.size());
+            log.info("Items after expansion: {}", jsoupCards.size());
 
             try {
                 for (Element card : jsoupCards) {
@@ -49,7 +50,7 @@ public abstract class AbstractSiteParser implements VacancyParser {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error parsing card: {}", e.getMessage());
         }
 
         return vacancies;

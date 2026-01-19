@@ -1,6 +1,7 @@
 package com.osem.vpar.service.impl;
 
 import com.microsoft.playwright.*;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Service
 @Qualifier("pracparser")
+@Slf4j
 public class PracujPlParser extends AbstractSiteParser {
     //locators
     private static final String title = "h2[data-test='offer-title']";
@@ -32,7 +34,7 @@ public class PracujPlParser extends AbstractSiteParser {
                     .forEach(el -> el.locator(title).click());
             page.waitForTimeout(500);
         } catch (Exception e) {
-            System.err.println("Error during expansion: " + e.getMessage());
+            log.error("Error during expansion: {}", e.getMessage());
         }
     }
 
