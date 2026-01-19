@@ -1,13 +1,16 @@
 package com.osem.vpar.service.impl;
 
 import com.microsoft.playwright.*;
+import com.osem.vpar.model.Vacancy;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,6 +24,28 @@ public class PracujPlParser extends AbstractSiteParser {
     private static final String vacancyLink = "a[data-test='link-offer']";
     private static final String dateAdded = "p[data-test='text-added']";
 
+    @Value("${parser.pracuj.urls}")
+    private List<String> urlsToScrape;
+
+    @Override
+    public List<Vacancy> parse() {
+        List<Vacancy> allVacancies = new ArrayList<>();
+
+        if (urlsToScrape == null || urlsToScrape.isEmpty()) {
+            log.warn("⚠️ No URLs found in application.properties for Pracuj.pl");
+            return allVacancies;
+        }
+
+        for (String url : urlsToScrape) {
+            log.info("🔄 Processing URL from config: {}", url);
+
+            List<Vacancy> found = super.scrapeCategory(url);
+
+            allVacancies.addAll(found);
+        }
+
+        return allVacancies;
+    }
     @Override
     protected void onPageLoad(Page page) {
         try {

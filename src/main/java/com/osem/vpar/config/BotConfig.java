@@ -1,6 +1,7 @@
 package com.osem.vpar.config;
 
 import com.osem.vpar.bot.VacanciesBot;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -8,6 +9,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 @Configuration
+@Slf4j
 public class BotConfig {
 
     @Bean
@@ -15,11 +17,11 @@ public class BotConfig {
         TelegramBotsApi api = new TelegramBotsApi(DefaultBotSession.class);
         try {
             api.registerBot(vacanciesBot);
-            System.out.println("---------------------------------------");
-            System.out.println("✅ The Bot registered successfully: " + vacanciesBot.getBotUsername());
-            System.out.println("---------------------------------------");
+            log.info("---------------------------------------");
+            log.info("✅ The Bot registered successfully: {}", vacanciesBot.getBotUsername());
+            log.info("---------------------------------------");
         } catch (TelegramApiException e) {
-            System.err.println("❌ Bot registration is failed  : " + e.getMessage());
+            log.info("❌ Bot registration is failed  : {}", e.getMessage());
         }
         return api;
     }

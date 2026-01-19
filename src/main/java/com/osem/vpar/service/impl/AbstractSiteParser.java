@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 @Slf4j
 public abstract class AbstractSiteParser implements VacancyParser {
-    @Override
-    public List<Vacancy> parse(String searchUrl) {
+
+    public List<Vacancy> scrapeCategory(String searchUrl){
         List<Vacancy> vacancies = new ArrayList<>();
 
         try (Playwright playwright = Playwright.create();

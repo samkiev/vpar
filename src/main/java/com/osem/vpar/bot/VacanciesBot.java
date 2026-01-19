@@ -1,5 +1,6 @@
 package com.osem.vpar.bot;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -8,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Component
+@Slf4j
 public class VacanciesBot extends TelegramLongPollingBot {
 
     @Value("${bot.name}")
@@ -19,13 +21,13 @@ public class VacanciesBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        System.out.println("📩 Update resieved: " + update);
+        log.info("\uD83D\uDCE9 Update resieved: {}", update);
 
         if (update.hasMessage() && update.getMessage().hasText()) {
             String text = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
 
-            System.out.println("💬 Message from " + chatId + ": " + text);
+            log.info("\uD83D\uDCAC Message from {}: {}", chatId, text);
 
             String response = "Hi! Your id is: " + chatId;
             sendMessage(chatId, response);
@@ -46,7 +48,8 @@ public class VacanciesBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            log.error("Something went wrong: {}", e.getMessage());
+
         }
     }
 }
