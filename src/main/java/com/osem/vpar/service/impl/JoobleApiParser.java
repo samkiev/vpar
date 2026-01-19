@@ -45,16 +45,14 @@ public class JoobleApiParser implements VacancyParser {
 
             if (responseDto != null && responseDto.getJobs() != null) {
                 responseDto.getJobs().stream().filter(job -> vacancyFilterService.isTitleRelevant(job.getTitle())).
-                        forEach(job -> {
-                            vacancies.add(Vacancy.builder()
-                                    .title(job.getTitle())
-                                    .salary(job.getSalary() != null ? job.getSalary() : "Salary is not specified.")
-                                    .companyName(job.getCompany())
-                                    .url(job.getUrl())
-                                    .dateAdded(job.getDateAdded() != null ? job.getDateAdded().substring(0, 10) : LocalDate.now().toString())
-                                    .build()
-                            );
-                        });
+                        forEach(job -> vacancies.add(Vacancy.builder()
+                                .title(job.getTitle())
+                                .salary(job.getSalary() != null ? job.getSalary() : "Salary is not specified.")
+                                .companyName(job.getCompany())
+                                .url(job.getUrl())
+                                .dateAdded(job.getDateAdded() != null ? job.getDateAdded().substring(0, 10) : LocalDate.now().toString())
+                                .build()
+                        ));
             }
         } catch (Exception e) {
             log.error("❌ Error during Jooble parsing", e);

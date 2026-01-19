@@ -26,7 +26,7 @@ public class PracujPlParser extends AbstractSiteParser {
         try {
             page.locator("//button[@data-test='button-submitCookie']").click();
         } catch (Exception e) {
-
+            log.debug("Skip cookies.......");
         }
         try {
             List<Locator> elements = page.locator("div[data-test='default-offer']").all();
