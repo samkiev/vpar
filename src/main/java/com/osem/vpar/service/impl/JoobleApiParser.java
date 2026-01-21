@@ -1,6 +1,7 @@
 package com.osem.vpar.service.impl;
 
 import com.osem.vpar.model.Vacancy;
+import com.osem.vpar.model.dto.JoobleDto;
 import com.osem.vpar.model.dto.JoobleJobRequestDto;
 import com.osem.vpar.model.dto.JoobleResponseDto;
 import com.osem.vpar.service.VacancyParser;
@@ -31,6 +32,7 @@ public class JoobleApiParser implements VacancyParser {
         this.restClient = RestClient.create();
     }
 
+
     @Override
     public List<Vacancy> parse() {
         log.info("🚀 Starting Jooble parser for url: {}", searchUrl);
@@ -49,15 +51,9 @@ public class JoobleApiParser implements VacancyParser {
                         .body(JoobleResponseDto.class);
 
                 if (responseDto != null && responseDto.getJobs() != null) {
-                    responseDto.getJobs().stream().filter(job -> vacancyFilterService.isTitleRelevant(job.getTitle())).
-                            forEach(job -> vacancies.add(Vacancy.builder()
-                                    .title(job.getTitle())
-                                    .salary(job.getSalary() != null ? job.getSalary() : "Salary is not specified.")
-                                    .companyName(job.getCompany())
-                                    .url(job.getUrl())
-                                    .dateAdded(job.getDateAdded() != null ? job.getDateAdded().substring(0, 10) : LocalDate.now().toString())
-                                    .build()
-                            ));
+                    responseDto.getJobs().stream().filter(job -> vacancyFilterService.isTitleRelevant(job.getTitle()))
+                            .map(this::mapToEntity)
+                            .forEach(vacancies::add);
                     log.info("🚀 Jooble parsing for keyword: {}", keyWord);
                 }
             } catch (Exception e) {
@@ -68,4 +64,25 @@ public class JoobleApiParser implements VacancyParser {
         log.info("✅ Jooble parsing finished. Found {} vacancies", vacancies.size());
         return vacancies;
     }
+
+    private Vacancy mapToEntity(JoobleDto job) {
+        return Vacancy.builder()
+                .title(job.getTitle())
+                .salary(formatSalary(job.getSalary()))
+                .companyName(job.getCompany())
+                .url(job.getUrl())
+                .dateAdded(formatDate(job.getDateAdded()))
+                .build();
+    }
+    private String formatSalary(String salary) {
+        return (salary != null && !salary.isBlank()) ? salary : "Salary not specified";
+    }
+
+    private String formatDate(String dateStr) {
+        if (dateStr == null || dateStr.length() < 10) {
+            return LocalDate.now().toString();
+        }
+        return dateStr.substring(0, 10);
+    }
+
 }

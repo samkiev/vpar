@@ -6,15 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Qualifier("pracparser")
 @Slf4j
 public class PracujPlParser extends AbstractSiteParser {
     //locators
@@ -46,12 +45,16 @@ public class PracujPlParser extends AbstractSiteParser {
 
         return allVacancies;
     }
+
     @Override
     protected void onPageLoad(Page page) {
         try {
             page.locator("//button[@data-test='button-submitCookie']").click();
         } catch (Exception e) {
             log.debug("Skip cookies.......");
+            log.debug("Taking screenshot...");
+            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("screenshot.png")));
+
         }
         try {
             List<Locator> elements = page.locator("div[data-test='default-offer']").all();

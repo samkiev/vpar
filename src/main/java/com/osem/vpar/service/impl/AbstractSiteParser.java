@@ -8,12 +8,14 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
 @Slf4j
 public abstract class AbstractSiteParser implements VacancyParser {
 
-    public List<Vacancy> scrapeCategory(String searchUrl){
+    public List<Vacancy> scrapeCategory(String searchUrl) {
         List<Vacancy> vacancies = new ArrayList<>();
 
         try (Playwright playwright = Playwright.create();
@@ -21,7 +23,9 @@ public abstract class AbstractSiteParser implements VacancyParser {
                      .setHeadless(false)
                      .setArgs(List.of("--start-maximized")))) {
             BrowserContext context = browser.newContext(new Browser.NewContextOptions()
-                    .setViewportSize(null));
+                    .setViewportSize(1920, 1080) // Размер экрана
+                    .setRecordVideoDir(Paths.get("videos/"))
+                    .setRecordVideoSize(1920, 1080));
             Page page = context.newPage();
 
             log.info("Navigating to: {}", searchUrl);
@@ -48,6 +52,8 @@ public abstract class AbstractSiteParser implements VacancyParser {
             } catch (Exception e) {
                 System.err.println("Error parsing card: " + e.getMessage());
             }
+            context.close();
+            browser.close();
 
         } catch (Exception e) {
             log.error("Error parsing card: {}", e.getMessage());

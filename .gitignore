@@ -45,3 +45,4 @@ logs/
 
 ### Secrets (на будущее) ###
 secret.properties
+/.env
