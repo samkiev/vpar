@@ -2,8 +2,6 @@ package com.osem.vpar;
 
 import com.osem.vpar.model.Vacancy;
 import com.osem.vpar.service.VacancyParser;
-import com.osem.vpar.service.impl.JoobleApiParser;
-import com.osem.vpar.service.impl.PracujPlParser;
 import com.osem.vpar.service.impl.VacancyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,5 +49,7 @@ public class ConsoleRunner implements CommandLineRunner {
         log.info("---------------------------------------");
         log.info("Job done! Found: {}. New Saved: {}", vacancies.size(), savedCount);
         log.info("---------------------------------------");
+        log.info("👋 Shutting down application...");
+        System.exit(0);
     }
 }
