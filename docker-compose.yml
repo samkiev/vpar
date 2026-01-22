@@ -43,6 +43,11 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+        test: [ "CMD", "kafka-topics", "--list", "--bootstrap-server", "localhost:9092" ]
+        interval: 30s
+        timeout: 10s
+        retries: 4
 
   # 4. Jenkins
   jenkins:
@@ -56,6 +61,43 @@ services:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+
+  # 🤖 5. BOT
+  bot-service:
+    image: vpar-app:runner
+    container_name: vpar-bot
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=bot
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/job_agregator_db
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - BOT_TOKEN=${BOT_TOKEN}
+      - BOT_ADMIN_ID=${BOT_ADMIN_ID}
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+  # 🕷️ 2. Parser
+  parser-service:
+    image: vpar-app:runner
+    container_name: vpar-parser
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=parser
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/job_agregator_db
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - JOOBLE_API_KEY=${JOOBLE_API_KEY}
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
 
 #  # 5.Java vpar app
 #  app:
