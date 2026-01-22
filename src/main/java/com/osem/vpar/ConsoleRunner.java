@@ -39,9 +39,7 @@ public class ConsoleRunner implements CommandLineRunner {
 
         }
 
-        vacancies.forEach(v -> {
-            log.info("Found: {} at {} With Salary: {} Date published: {} Vacancy Url: {}", v.getTitle(), v.getCompanyName(), v.getSalary(), v.getDateAdded(), v.getUrl());
-        });
+        vacancies.forEach(v -> log.info("Found: {} at {} With Salary: {} Date published: {} Vacancy Url: {}", v.getTitle(), v.getCompanyName(), v.getSalary(), v.getDateAdded(), v.getUrl()));
 
 
         int savedCount = vacancyService.saveNewVacancies(vacancies);
@@ -49,7 +47,7 @@ public class ConsoleRunner implements CommandLineRunner {
         log.info("---------------------------------------");
         log.info("Job done! Found: {}. New Saved: {}", vacancies.size(), savedCount);
         log.info("---------------------------------------");
-        log.info("👋 Shutting down application...");
-        System.exit(0);
+//        log.info("👋 Shutting down application...");
+//        System.exit(0);
     }
 }

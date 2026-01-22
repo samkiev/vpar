@@ -12,44 +12,72 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d job_agregator_db"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d job_agregator_db" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # 2.Java app
-  app:
-    build: .
-    container_name: vpar-app
-    depends_on:
-      postgres:
-        condition: service_healthy
+  # 2. Zookeeper
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: vpar-zookeeper
     environment:
-      # connect to postgres
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/job_agregator_db
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
 
-      # tokens
-      BOT_TOKEN: ${BOT_TOKEN}
-      BOT_ADMIN_ID: ${BOT_ADMIN_ID}
-      JOOBLE_API_KEY: ${JOOBLE_API_KEY}
+    # 3. Kafka
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: vpar-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-    volumes:
-      # Add temporary folder for videos
-      - ./debug-videos:/app/videos
-    # 3. JENKINS
+  # 4. Jenkins
   jenkins:
-      image: jenkins/jenkins:lts-jdk21
-      container_name: vpar-jenki
-      user: root
-      ports:
-        - "8081:8080"
-        - "50000:50000"
-      volumes:
-        - jenkins_home:/var/jenkins_home
-        - /var/run/docker.sock:/var/run/docker.sock
-      restart: unless-stopped
+    image: jenkins/jenkins:lts-jdk21
+    container_name: vpar-jenkins
+    user: root
+    ports:
+      - "8081:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+#  # 5.Java vpar app
+#  app:
+#    build: .
+#    container_name: vpar-app
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#    environment:
+#      # connect to postgres
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/job_agregator_db
+#      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+#      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+#
+#      # tokens
+#      BOT_TOKEN: ${BOT_TOKEN}
+#      BOT_ADMIN_ID: ${BOT_ADMIN_ID}
+#      JOOBLE_API_KEY: ${JOOBLE_API_KEY}
+#
+#    volumes:
+#      # Add temporary folder for videos
+#      - ./debug-videos:/app/videos
 
 volumes:
   postgres_data:

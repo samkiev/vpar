@@ -4,7 +4,6 @@ import com.osem.vpar.bot.VacanciesBot;
 import com.osem.vpar.model.Vacancy;
 import com.osem.vpar.repository.VacancyRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +15,7 @@ public class VacancyService {
 
     private final VacancyRepository vacancyRepository;
     private final VacanciesBot vacanciesBot;
+    private final VacancyProducer vacancyProducer;
 
     @Value("${bot.adminId}")
     private long adminChatId;
@@ -25,6 +25,8 @@ public class VacancyService {
         for (Vacancy vacancy : vacancies) {
             if (!vacancyRepository.existsByUrl(vacancy.getUrl())) {
                 vacancyRepository.save(vacancy);
+
+                vacancyProducer.sendVacancy(vacancy);
 
                 String message = String.format(
                         "🔥 <b>%s</b>\n\n🏢 %s\n💰 %s\n📅 %s\n\n👉 <a href=\"%s\">Link</a>",
