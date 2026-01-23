@@ -15,9 +15,16 @@ public class VacancyProducer {
     private static final String TOPIC = "vacancies-topic";
 
     public void sendVacancy(Vacancy vacancy) {
-        log.info("==> Sending vacancy message to Kafka: {}", vacancy.getTitle());
+        String message = String.format(
+                "🔥 <b>%s</b>\n🏢 %s\n💰 %s\n🗓 %s\n👉 <a href=\"%s\">Link</a>",
+                vacancy.getTitle(),
+                vacancy.getCompanyName(),
+                vacancy.getSalary(),
+                vacancy.getDateAdded(),
+                vacancy.getUrl()
+        );
 
-        String message =  "VACANCY: " + vacancy.getTitle() + " | " + vacancy.getUrl();
+        log.info("📤 Sending vacancy to Kafka: {}", vacancy.getTitle());
         kafkaTemplate.send(TOPIC, message);
     }
 }

@@ -2,6 +2,7 @@ package com.osem.vpar;
 
 import com.osem.vpar.model.Vacancy;
 import com.osem.vpar.service.VacancyParser;
+import com.osem.vpar.service.impl.VacancyProducer;
 import com.osem.vpar.service.impl.VacancyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ public class ConsoleRunner implements CommandLineRunner {
 
     private final List<VacancyParser> parsers;
     private final VacancyService vacancyService;
+    private final VacancyProducer vacancyProducer;
 
     @Override
     public void run(String... args) {
@@ -43,13 +45,13 @@ public class ConsoleRunner implements CommandLineRunner {
 
         vacancies.forEach(v -> log.info("Found: {} at {} With Salary: {} Date published: {} Vacancy Url: {}", v.getTitle(), v.getCompanyName(), v.getSalary(), v.getDateAdded(), v.getUrl()));
 
-
-        int savedCount = vacancyService.saveNewVacancies(vacancies);
+        var filteredVacancy = vacancies.stream().filter(vacancyService::trySave).toList();
+        filteredVacancy.forEach(vacancyProducer::sendVacancy);
 
         log.info("---------------------------------------");
-        log.info("Job done! Found: {}. New Saved: {}", vacancies.size(), savedCount);
+        log.info("Parsing finished. Found: {}. New Saved: {}", vacancies.size(), filteredVacancy.size());
         log.info("---------------------------------------");
-//        log.info("👋 Shutting down application...");
-//        System.exit(0);
+
     }
+
 }
