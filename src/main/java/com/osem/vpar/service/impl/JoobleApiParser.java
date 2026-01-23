@@ -7,6 +7,7 @@ import com.osem.vpar.model.dto.JoobleResponseDto;
 import com.osem.vpar.service.VacancyParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Profile("parser")
 @Slf4j
 public class JoobleApiParser implements VacancyParser {
     private final VacancyFilterService vacancyFilterService;
