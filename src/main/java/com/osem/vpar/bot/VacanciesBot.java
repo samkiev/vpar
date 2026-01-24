@@ -16,6 +16,8 @@ public class VacanciesBot extends TelegramLongPollingBot {
 
     @Value("${bot.name}")
     private String botName;
+    @Value("${bot.adminId}")
+    private Long adminId;
 
     public VacanciesBot(@Value("${bot.token}") String botToken) {
         super(botToken);
@@ -34,6 +36,10 @@ public class VacanciesBot extends TelegramLongPollingBot {
             String response = "Hi! Your id is: " + chatId;
             sendMessage(chatId, response);
         }
+    }
+
+    public void sendToAdmin(String text) {
+        sendMessage(adminId, text);
     }
 
     @Override

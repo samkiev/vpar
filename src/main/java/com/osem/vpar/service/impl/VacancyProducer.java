@@ -15,13 +15,14 @@ public class VacancyProducer {
     private static final String TOPIC = "vacancies-topic";
 
     public void sendVacancy(Vacancy vacancy) {
+        String safeUrl = vacancy.getUrl().replace("&", "&amp;");
         String message = String.format(
                 "🔥 <b>%s</b>\n🏢 %s\n💰 %s\n🗓 %s\n👉 <a href=\"%s\">Link</a>",
                 vacancy.getTitle(),
                 vacancy.getCompanyName(),
                 vacancy.getSalary(),
                 vacancy.getDateAdded(),
-                vacancy.getUrl()
+                safeUrl
         );
 
         log.info("📤 Sending vacancy to Kafka: {}", vacancy.getTitle());
