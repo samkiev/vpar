@@ -1,10 +1,12 @@
 package com.osem.vpar.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Service
+@Profile("bot")
 @Slf4j
 public class VacancyConsumer {
 
