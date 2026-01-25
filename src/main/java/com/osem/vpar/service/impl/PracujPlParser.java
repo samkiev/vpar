@@ -24,6 +24,7 @@ public class PracujPlParser extends AbstractSiteParser {
     private static final String salary = "span[data-test='offer-salary']";
     private static final String vacancyLink = "a[data-test='link-offer']";
     private static final String dateAdded = "p[data-test='text-added']";
+    private static final String acceptCookies = "//button[@data-test='button-submitCookie']";
 
     @Value("${parser.pracuj.urls}")
     private List<String> urlsToScrape;
@@ -51,7 +52,7 @@ public class PracujPlParser extends AbstractSiteParser {
     @Override
     protected void onPageLoad(Page page) {
         try {
-            page.locator("//button[@data-test='button-submitCookie']").click();
+            page.locator(acceptCookies).click();
         } catch (Exception e) {
             log.debug("Skip cookies.......");
             log.debug("Taking screenshot...");
